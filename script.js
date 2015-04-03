@@ -16,9 +16,5 @@
         lng : -122.485883,
         id : 2
     });
-    
-    map.removeBy(function(marker) {
-        return marker.id === 2;
-    });
 
 }(window, window.Mapster || (window.Mapster = {})));

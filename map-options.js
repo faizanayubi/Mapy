@@ -15,7 +15,8 @@
         },
         panControlOptions: {
             position: google.maps.ControlPosition.BOTTOM_LEFT
-        }
+        },
+        clusterer: {}
     };
 
 }(window, google, window.Mapster || (window.Mapster = {})))
