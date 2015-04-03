@@ -8,10 +8,8 @@
 
     map.addMarker({
         lat : 37.791350,
-        lng : 122.435883,
-        visible : true,
-        draggable : true,
-        id : 1
+        lng : -122.435883,
+        content : 'i am here'
     });
 
 }(window, window.Mapster || (window.Mapster = {})));
