@@ -10,8 +10,11 @@
         function Mapster(element, opts) {
             this.gMap = new google.maps.Map(element, opts);
             this.markers = List.create();
-            if(opts.clusterer){
+            if(opts.cluster){
                 this.markerClusterer = new MarkerClusterer(this.gMap, [], opts.clusterer);
+            }
+            if(opts.geocoder){
+                this.geocoder = new google.maps.Geocoder();
             }
         }
 
@@ -40,16 +43,38 @@
             _on: function (opts) {
                 var self = this;
                 google.maps.event.addListener(opts.obj, opts.event, function (e) {
-                    opts.callback.call(self, e);
+                    opts.callback.call(self, e, opts.obj);
                 });
             },
+            
+            geocode: function(opts){
+                this.geocoder.geocode({
+                    address: opts.address
+                }, function(results, status) {
+                    if(status === google.maps.GeocoderStatus.OK) {
+                        opts.success.call(this, results, status);
+                    } else {
+                        opts.error.call(this, status);
+                    }
+                });
+            },
+            
+            setPano: function(element, opts){
+                var panorama = new google.maps.StreetViewPanorama(element, opts);
+                if(opts.events){
+                    this._attachEvents(panorama, opts.events);
+                }
+                this.gMap.setStreetView(panorama);
+            },
+            
             /**
              * Adds Marker to Map
              * @param {type} opts
              * @returns {mapster_L1.google.maps.Marker}
              */
             addMarker: function (opts) {
-                var marker;
+                var marker,
+                    self = this;
                 opts.position = {
                     lat: opts.lat,
                     lng: opts.lng
@@ -59,12 +84,8 @@
                     this.markerClusterer.addMarker(marker);
                 }
                 this.markers.add(marker);
-                if (opts.event) {
-                    this._on({
-                        obj: marker,
-                        event: opts.event.name,
-                        callback: opts.event.callback
-                    });
+                if (opts.events) {
+                    this._attachEvents(marker, opts.events);
                 };
                 if (opts.content) {
                     this._on({
@@ -80,6 +101,16 @@
                     });
                 }
                 return marker;
+            },
+            _attachEvents: function(obj, events){
+                var self = this;
+                events.forEach(function(event) {
+                        self._on({
+                            obj: obj,
+                            event: event.name,
+                            callback: event.callback
+                        });
+                    });
             },
             _addMarker: function(marker){
                 this.markers.add(marker);

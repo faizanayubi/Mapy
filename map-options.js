@@ -16,7 +16,8 @@
         panControlOptions: {
             position: google.maps.ControlPosition.BOTTOM_LEFT
         },
-        clusterer: {}
+        cluster: true,
+        geocode: true
     };
 
 }(window, google, window.Mapster || (window.Mapster = {})))
